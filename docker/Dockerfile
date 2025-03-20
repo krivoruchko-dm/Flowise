@@ -13,9 +13,17 @@ RUN npm install -g flowise
 FROM node:20-alpine
 
 # Install runtime dependencies
-RUN apk add --no-cache chromium git python3 py3-pip make g++ build-base cairo-dev pango-dev curl
-
-RUN apt-get update && apt-get install -y curl
+RUN apk add --no-cache \
+  chromium \
+  git \
+  python3 \
+  py3-pip \
+  make \
+  g++ \
+  build-base \
+  cairo-dev \
+  pango-dev \
+  curl
 
 # Set the environment variable for Puppeteer to find Chromium
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
@@ -23,5 +31,8 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 # Copy Flowise from the build stage
 COPY --from=build /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --from=build /usr/local/bin /usr/local/bin
+
+# Expose default port
+EXPOSE 3000
 
 ENTRYPOINT ["flowise", "start"]
